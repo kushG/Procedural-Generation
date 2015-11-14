@@ -165,6 +165,7 @@ public class TerrainGenerator : MonoBehaviour
 			bottom = GenerateTerrains(x, botZ, bottom );
 		}
 
+
 		listX.Add (x);
 		listZ.Add (z);
 
@@ -172,74 +173,140 @@ public class TerrainGenerator : MonoBehaviour
 		Debug.Log (listX.Contains(x));
 	}
 
+	Vector3 comparePos;
 	public void Update(){
-		Vector3 comparePos = startPos;
-		//Forward
-		if ((player.transform.position.z - comparePos.z) >= (terrainSize * 0.5f)) {
+//	comparePos = startPos;
+//		
+//		Debug.Log ("X:" + x);
+//		Debug.Log ("Z:" + z);  
+//		//Forward
+//		if ((player.transform.position.z - comparePos.z) > terrainSize * 0.5f) {
+//
+////			if(!listZ.Contains(z)){ 
+//				bottom = current;
+//				left = null;
+//				right = null;
+//				top = null;
+////				listZ.Add(z+1);
+//				z = z+1;
+//				comparePos.z = z * terrainSize;
+//				Debug.Log ("Forqward");
+////			}
+//					}
+//		// Right
+//		if ((player.transform.position.x - comparePos.x) > terrainSize ){
+////			if(!listX.Contains(x)){
+//				bottom = null;
+//				left = current;
+//				right = null;
+//				top = null;
+////				listX.Add(x+1);
+//				x = x+1;
+//				comparePos.x = x * terrainSize;
+//				Debug.Log ("Right" + player.transform.position);
+//				Debug.Log ("Right Compare" + comparePos);
+////			}
+//		}
+//		//Bottom
+//		if ((comparePos.z - player.transform.position.z) > terrainSize) {
+////			if(!listZ.Contains(z)){
+//				bottom = null;
+//				left = null;
+//				right = null;
+//				top = current;
+////				listZ.Add(z-1);
+//				z = z-1;
+//				comparePos.z = z * terrainSize;
+//				Debug.Log ("Bottom");
+////			}
+//		}
+//		//Left
+//		if ((comparePos.x - player.transform.position.x) > terrainSize ) {
+////			if(!listX.Contains(x)){
+//				bottom = null;
+//				left = null;
+//				right = current;
+//				top = null;
+////				listX.Add (x-1);
+//				x = x-1;
+//				comparePos.x = x * terrainSize;
+//				Debug.Log ("Left");
+////			}
+//		}
+		var pos = player.transform.position;
+		//comparePos = new Vector3(Mathf.Abs(Mathf.Floor(pos.x / terrainSize)),0, Mathf.Abs(Mathf.Floor(pos.z / terrainSize))) * terrainSize;
 
-			if(!listZ.Contains(z)){ 
-				bottom = current;
-				left = null;
-				right = null;
-				top = null;
-				listZ.Add(z+1);
-				z = z+1;
-				comparePos.z = player.transform.position.z;
+		comparePos = new Vector3{
+			x = Mathf.Round((pos.x + Mathf.Sign (pos.x) * terrainSize * 0.5f) / terrainSize) * terrainSize,
+			y = 0, 
+			z = Mathf.Round((pos.z + Mathf.Sign (pos.z) * terrainSize * 0.5f) / terrainSize) * terrainSize
+		};
+
+		if(pos.x != 0){
+			float diffX = comparePos.x/terrainSize;
+			int newX = x;
+			if(Mathf.Sign (diffX) == -1){
+				newX = (int)diffX + 1;
 			}
+			else{
+					 newX = (int)diffX -1;
+				}
+
+				if (newX != x){
+					if(Mathf.Sign((float)newX - (float)x) == 1) {
+
+						if(!listX.Contains(x+1)){
+							x = x +1;
+							Debug.Log ("Right");	
+							listX.Add(x);
+							foreach(int i in listX){
+							Debug.Log ("List: " + i);
+						}
+						bottom = null;
+						left = current;
+						right = null;
+						top = null;
 					}
-		// Right
-		if ((player.transform.position.x - comparePos.x) >= (terrainSize * 0.5f) ){
-			if(!listX.Contains(x)){
-				bottom = null;
-				left = current;
-				right = null;
-				top = null;
-				listX.Add(x+1);
-				x = x+1;
-				comparePos.x = player.transform.position.z;
+
+				}
+				else if(Mathf.Sign((float)newX - (float)x) == -1) {
+					Debug.Log ("Left");
+					x = x-1;
+				}
 			}
+		
+			Debug.Log ("NewX" + newX);
 		}
-		//Bottom
-		if ((comparePos.z - player.transform.position.z) >= (terrainSize * 0.5f)) {
-			if(!listZ.Contains(z)){
-				bottom = null;
-				left = null;
-				right = null;
-				top = current;
-				listZ.Add(z-1);
-				z = z-1;
-				comparePos.z = player.transform.position.z;
-			}
-		}
-		//Left
-		if ((comparePos.x - player.transform.position.x) >= (terrainSize * 0.5f)) {
-			if(!listX.Contains(x)){
-				bottom = null;
-				left = null;
-				right = current;
-				top = null;
-				listX.Add (x-1);
-				x = x-1;
-				comparePos.x = player.transform.position.x;
-			}
-		}
+
+
+
+
+
+		Debug.Log("X: " + x);
 
 		if(left == null) {
 			int leftX = x-1;
-			left = GenerateTerrains(leftX, z, left );
+			//			left = GenerateTerrains(leftX, z, left );
+			Debug.Log ("1");
 		}
 		if(right == null) {
 			int rightX = x+1;
-			right = GenerateTerrains(rightX, z, right );
+			//			right = GenerateTerrains(rightX, z, right );
+			Debug.Log ("2");
 		}
 		if(top == null) {
 			int topZ = z+1;
-			top = GenerateTerrains(x, topZ, top );
+			//			top = GenerateTerrains(x, topZ, top );
+			Debug.Log ("3");
 		}
-	    if(bottom == null) {
+		if(bottom == null) {
 			int botZ = z-1;
-			bottom = GenerateTerrains(x, botZ, bottom );
+			//			bottom = GenerateTerrains(x, botZ, bottom );
+			Debug.Log ("4");
 		}
+		
+		Debug.Log ("compare" + comparePos);
+
 	}
 
 	public Terrain GenerateTerrains(int x, int z, Terrain t){
